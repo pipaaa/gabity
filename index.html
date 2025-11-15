@@ -1,216 +1,624 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gabity 2025</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gabity — Encendido de Luz 2025</title>
+
+  <!--
+    Gabity — Encendido de Luz 2025
+    Single-file site: index.html
+    Requirements implemented:
+      - Fullscreen hero with single "scroll" button
+      - Mobile background override (fondomovil.png)
+      - Countdown to 2025-11-30 19:25 Europe/Madrid
+      - Eventbrite purchase link
+      - Collaborators section (Pipaon Esperientziak, Saborium, Olalde)
+      - Tickets summary
+      - Snow (light), animated border lights, subtle effects
+      - "Modo Navidad Extremo" switch with extra effects
+      - Music plays after user interaction (click/touch)
+      - Custom cursor: boot.png (bota de Papa Noel) and default cursor hidden
+      - No top-left logo, minimal UI
+      - Performance-conscious animations
+  -->
+
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body, html { height: 100%; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
-
-    /* Background image responsive */
-    .hero {
-      height: 100vh;
-      width: 100vw;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      position: relative;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-    }
-
-    /* Desktop background */
-    .hero { background-image: url('fondo.png'); }
-
-    /* Mobile background override */
-    @media (max-width: 768px) {
-      .hero { background-image: url('fondomovil.png'); }
-    }
-
-    /* Scroll button */
-    .scroll-btn {
-      margin-bottom: 40px;
-      width: 60px;
-      height: 60px;
-      background: rgba(255,255,255,0.85);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 0 15px rgba(255,255,255,0.8);
-      animation: bounce 2s infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(10px); }
-    }
-
-    /* Snow animation */
-    .snowflake {
-      position: fixed;
-      top: -10px;
-      color: white;
-      font-size: 1em;
-      opacity: 0.9;
-      animation: fall linear infinite;
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    @keyframes fall {
-      to { transform: translateY(110vh); }
-    }
-
-    /* Section after hero */
-    #content {
-      padding: 80px 20px;
-      background: #0d0d0d;
-      color: white;
-      text-align: center;
-    }
-
-    /* Countdown */
-    #countdown {
-      font-size: 2.3rem;
-      margin: 20px 0;
-      color: #ffdf7e;
-      text-shadow: 0 0 10px #ffbf00;
-    }
-
-    /* Collaborators */
-    .colabs {
-      max-width: 800px;
-      margin: 40px auto;
-      text-align: left;
-    }
-
-    .colab-item { margin-bottom: 25px; }
-
-    .colab-item h3 { color: #ffdf7e; }
-
-    .colab-item a { color: #7ec8ff; }
-
-    /* Santa removed */
-
-    @keyframes santaFly {
-      0% { left: -300px; }
-      50% { left: 110%; }
-      100% { left: -300px; }
-    }
-
-    /* Christmas lights border */
-  body::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    border: 15px solid;
-    border-image: repeating-linear-gradient(90deg, red, red 20px, green 20px, green 40px, gold 40px, gold 60px) 30;
-    animation: glow 2s infinite alternate;
-    z-index: 999;
+  :root{
+    --bg:#07060a;
+    --panel:#0f1113;
+    --muted:#9aa3ad;
+    --accent:#ffdf7e; /* warm gold */
+    --accent-2:#7ec8ff; /* cool cyan */
+    --glass: rgba(255,255,255,0.04);
+    --maxWidth:1100px;
+    --mobile-break:768px;
+    --border-thickness:18px;
   }
-  @keyframes glow {
-    from { filter: brightness(0.8); }
-    to { filter: brightness(1.4); }
+
+  /* Reset & base */
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:var(--bg);color:#fff;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+  a{color:var(--accent-2);text-decoration:none}
+  a:focus{outline:2px solid rgba(126,200,255,0.25);outline-offset:2px}
+
+  /* CUSTOM CURSOR: hide system cursor and use boot.png when available.
+     Fallback: hide cursor only on devices that support cursor (not touch). */
+  @media (pointer: fine) {
+    body { cursor: none; } /* hide default */
+    .cursor-boot { position: fixed; width:64px; height:64px; pointer-events:none; z-index:999999; transform:translate(-50%, -50%); transition:transform 120ms linear; image-rendering: -webkit-optimize-contrast; }
   }
-</style>
+
+  /* HERO (fullscreen) */
+  .hero {
+    height:100vh;
+    width:100%;
+    position:relative;
+    display:flex;
+    align-items:flex-end; /* button near bottom */
+    justify-content:center;
+    overflow:hidden;
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    transition:filter .3s ease;
+  }
+
+  /* Desktop background */
+  .hero { background-image: url('fondo.png'); }
+
+  /* Mobile background override */
+  @media (max-width: var(--mobile-break)) {
+    .hero { background-image: url('fondomovil.png'); background-position:center top; }
+  }
+
+  /* soft gradient overlay to make foreground readable */
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(6,6,8,0.18) 0%, rgba(6,6,8,0.55) 70%, rgba(6,6,8,0.85) 100%);
+    pointer-events:none;
+  }
+
+  /* Border lights (decorative) */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    border: var(--border-thickness) solid transparent;
+    border-image: linear-gradient(90deg, #ff3b3b, #ffdf7e 25%, #7efc9a 50%, #7ec8ff 75%, #ff3b3b 100%) 1;
+    pointer-events:none;
+    z-index:999;
+    opacity:.95;
+    filter: drop-shadow(0 6px 20px rgba(0,0,0,0.6));
+    transition:filter .25s ease, transform .25s ease, opacity .25s ease;
+  }
+
+  /* Subtle pulsing on border lights */
+  @keyframes borderPulse {
+    0%{ filter: brightness(0.85) }
+    50%{ filter: brightness(1.25) }
+    100%{ filter: brightness(0.9) }
+  }
+  body:not(.extreme) ::before { animation: borderPulse 3s ease-in-out infinite; }
+
+  /* central scroll button (only control in hero) */
+  .scroll-control {
+    position:relative; z-index:1000; margin-bottom:46px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .scroll-btn {
+    width:64px; height:64px; border-radius:999px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.88));
+    color:#111; display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.45), 0 0 30px rgba(255,223,126,0.08) inset;
+    cursor:pointer;
+    transform:translateY(0);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .scroll-btn:active{ transform:translateY(4px) scale(.995) }
+
+  /* small arrow icon inside button */
+  .scroll-btn .arrow {
+    display:inline-block;
+    width:18px; height:18px;
+    border-right:3px solid #111; border-bottom:3px solid #111;
+    transform:rotate(45deg);
+  }
+
+  /* CONTENT area below hero */
+  main#content {
+    background: linear-gradient(180deg, rgba(8,8,10,1) 0%, rgba(12,12,14,1) 100%);
+    padding:48px 20px 80px;
+    margin:0 auto;
+    color:#e6eef7;
+    min-height:60vh;
+  }
+  .wrap { max-width:var(--maxWidth); margin:0 auto; }
+
+  /* headline */
+  header.event-head { text-align:center; margin-bottom:18px; }
+  header.event-head h1 { font-size:32px; letter-spacing:0.6px; color:var(--accent); margin-bottom:6px; text-shadow:0 6px 30px rgba(0,0,0,0.6);}
+  header.event-head p.lead { color:#dfe9f7; opacity:0.9; font-size:15px; margin-top:6px; line-height:1.45 }
+
+  /* Grid layout */
+  .grid {
+    display:grid; grid-template-columns: 1fr 360px; gap:28px; align-items:start;
+  }
+  @media (max-width: 960px) { .grid { grid-template-columns: 1fr; } }
+
+  /* info card */
+  .card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:14px; padding:22px; border:1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 6px 24px rgba(1,1,2,0.6);
+  }
+
+  .muted { color:var(--muted); font-size:13px; }
+
+  /* countdown (stylish) */
+  .countdown-wrap { display:flex; gap:18px; align-items:center; justify-content:flex-start; flex-wrap:wrap; margin-top:14px; }
+  .countdown {
+    background: linear-gradient(90deg,#14213d,#0b3b6f);
+    padding:10px 14px; border-radius:10px; min-width:180px;
+    display:flex; gap:12px; align-items:center; justify-content:center;
+    box-shadow: inset 0 -8px 18px rgba(0,0,0,0.25);
+  }
+  .countdown .num { font-weight:800; color:var(--accent); font-size:20px; min-width:44px; text-align:center; }
+  .countdown .label { color:#d7e6ff; font-size:11px; opacity:.95; text-align:center }
+
+  /* buy button */
+  .buy { display:inline-block; padding:12px 18px; background:linear-gradient(180deg,var(--accent), #f6c85d); color:#111; font-weight:700; border-radius:12px; box-shadow: 0 8px 28px rgba(255,215,100,0.12); text-decoration:none; }
+
+  /* Tickets list (aside) */
+  aside.ticket-area { position:sticky; top:28px; align-self:start; }
+  .tickets-list { list-style:none; padding-left:0; margin:0; display:flex; flex-direction:column; gap:12px; }
+  .ticket { padding:12px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03); display:flex; justify-content:space-between; align-items:center; }
+  .ticket strong{ color:var(--accent-2) }
+
+  /* collaborators */
+  .collabs { margin-top:18px; display:flex; flex-direction:column; gap:12px; }
+  .collab { padding:12px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03); }
+  .collab h4 { margin:0 0 6px 0; color:var(--accent); font-size:16px; }
+  .collab p { margin:0; color:#d6e3f6; font-size:14px; line-height:1.4 }
+
+  /* footer */
+  footer.site-foot { margin-top:36px; text-align:center; color: #9fb2cc; font-size:13px; opacity:.95; }
+
+  /* small utilities */
+  .small { font-size:13px; color:var(--muted) }
+
+  /* snowflakes (light) created with JS nodes, simple style */
+  .snow { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9000; overflow:visible; }
+
+  .snowflake {
+    position:fixed; top:-10px; color:rgba(255,255,255,0.92);
+    font-size:14px; user-select:none; pointer-events:none; text-shadow: 0 2px 6px rgba(0,0,0,0.45);
+    transform: translateY(-10vh);
+    will-change: transform, opacity;
+    mix-blend-mode: screen;
+  }
+
+  /* Extreme-mode additions (temporary visuals) */
+  body.extreme { filter: saturate(1.15) brightness(1.08); transition:filter .25s ease; }
+  body.extreme::before { transform: scale(1.04); }
+
+  /* burst spark used by extreme mode */
+  .spark {
+    position:fixed; width:10px; height:10px; border-radius:999px; pointer-events:none; z-index:99999;
+    box-shadow: 0 0 18px currentColor;
+    opacity:0.98; will-change:transform,opacity;
+  }
+
+  /* Accessibility focus */
+  button:focus, a:focus, input:focus { outline:2px dashed rgba(255,223,126,0.25); outline-offset:4px; }
+
+  /* Minor responsive tweaks for mobile */
+  @media (max-width:480px) {
+    .countdown .num { font-size:16px; min-width:40px }
+    .hero::after { background: linear-gradient(180deg, rgba(6,6,8,0.25) 0%, rgba(6,6,8,0.7) 100%); }
+    .scroll-btn { width:56px; height:56px }
+    .scroll-control { margin-bottom:24px }
+    .hero { align-items:flex-end; justify-content:center }
+  }
+
+  </style>
 </head>
 <body>
 
-  <!-- Santa -->
-  
+  <!-- custom boot cursor (visible on pointer-capable devices) -->
+  <img src="boot.png" alt="" class="cursor-boot" id="cursorBoot" style="display:none" />
 
-  <!-- HERO SECTION -->
-  <div class="hero">
-    <div class="scroll-btn" onclick="scrollToContent()">⬇️</div>
-  </div>
+  <!-- LIGHT SNOW layer (JS will append flakes here) -->
+  <div class="snow" id="snowLayer" aria-hidden="true"></div>
 
-  <!-- CONTENT -->
-  <section id="content">
-    <h1>Gabity 2025 — Donde brilla la Navidad</h1>
-    <p>Disfruta del encendido más especial del año, una experiencia única llena de magia, emoción y sorpresas.</p>
-
-    <h2>Cuenta atrás</h2>
-    <div id="countdown"></div>
-
-    <a href="https://www.eventbrite.es/e/gabity-2025-donde-brilla-la-navidad-tickets-1971140592574?aff=oddtdtcreator" target="_blank" style="font-size:1.5rem; color:#7ec8ff;">Comprar entradas</a>
-
-    <div class="colabs">
-      <h2>Colaboradores</h2>
-
-      <div class="colab-item">
-        <h3>Pipaon Esperientziak</h3>
-        <p>Creadores de Gabity desde sus inicios, diseñando experiencias mágicas y memorables cada año.</p>
-      </div>
-
-      <div class="colab-item">
-        <h3>Saborium</h3>
-        <p>Empresa de gastronomía y alimentos gourmet caseros, dulces y salados. Calidad y sabor navideño garantizado.</p>
-        <a href="https://saborium.vercel.app" target="_blank">Visitar Saborium</a>
-      </div>
-
-      <div class="colab-item">
-        <h3>Olalde</h3>
-        <p>El hogar de este evento tan esperado, donde cada rincón se transforma para vivir la magia de Gabity.</p>
-      </div>
+  <!-- HERO -->
+  <section class="hero" id="hero" role="region" aria-label="Encendido de Luz 2025 hero">
+    <div class="scroll-control" aria-hidden="false">
+      <button class="scroll-btn" id="scrollBtn" aria-label="Bajar para ver más">
+        <span class="arrow" aria-hidden="true"></span>
+      </button>
     </div>
   </section>
 
-  <script>
-    /* Smooth scroll */
-    function scrollToContent() {
-      document.getElementById('content').scrollIntoView({ behavior: 'smooth' });
+  <!-- MAIN CONTENT -->
+  <main id="content" class="wrap" role="main">
+    <header class="event-head" role="banner">
+      <h1>Encendido de Luz 2025 — Gabity</h1>
+      <p class="lead">Gabity: Donde brilla la Navidad. Una experiencia íntima, inmersiva y llena de sorpresas. Duración aproximada: <strong>7 minutos</strong>.</p>
+    </header>
+
+    <section class="grid" aria-labelledby="infoTitle">
+      <!-- LEFT: details -->
+      <div>
+        <div class="card" id="infoCard">
+          <h2 id="infoTitle" style="color:var(--accent);">Detalles del Encendido</h2>
+          <p class="small">Fecha y hora: <strong>30 de noviembre de 2025 — 19:25 (Europe/Madrid)</strong></p>
+
+          <!-- Countdown -->
+          <div class="countdown-wrap" style="margin-top:12px;">
+            <div class="countdown" role="timer" aria-live="polite" aria-atomic="true">
+              <div style="display:flex;gap:8px;align-items:center">
+                <div style="text-align:left">
+                  <div class="num" id="cdDays">--</div>
+                  <div class="label">Días</div>
+                </div>
+                <div style="text-align:left">
+                  <div class="num" id="cdHours">--</div>
+                  <div class="label">Horas</div>
+                </div>
+                <div style="text-align:left">
+                  <div class="num" id="cdMins">--</div>
+                  <div class="label">Min</div>
+                </div>
+                <div style="text-align:left">
+                  <div class="num" id="cdSecs">--</div>
+                  <div class="label">Seg</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-left:auto; display:flex; gap:12px; align-items:center;">
+              <a class="buy" href="https://www.eventbrite.es/e/gabity-2025-donde-brilla-la-navidad-tickets-1971140592574?aff=oddtdtcreator" target="_blank" rel="noopener" id="buyBtn">Comprar entradas</a>
+            </div>
+          </div>
+
+          <hr style="margin:16px 0; border:none; height:1px; background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.03));">
+
+          <p class="small">El encendido es íntimo y de aforo limitado. Recibirás un recordatorio: el <strong>pago se realiza en taquilla</strong> el día del evento — muestra tu confirmación (móvil o impresa).</p>
+
+          <!-- Modo Navidad Extremo -->
+          <div style="margin-top:18px; display:flex;align-items:center;gap:12px;">
+            <label for="extremeSwitch" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" id="extremeSwitch" aria-checked="false" />
+              <span style="color:var(--accent);font-weight:700;">Activar Modo Navidad Extremo</span>
+            </label>
+            <span class="small" style="margin-left:auto;color:var(--muted)">Prueba efectos visuales y musicales</span>
+          </div>
+        </div>
+
+        <!-- Collaborators -->
+        <div class="card" style="margin-top:22px;">
+          <h3 style="color:var(--accent);">Colaboradores</h3>
+          <div class="collabs" aria-hidden="false">
+            <article class="collab" aria-labelledby="pipaTitle">
+              <h4 id="pipaTitle">Pipaon Esperientziak — Organizador</h4>
+              <p>Gabity nace de <strong>Pipaon Esperientziak</strong>, proyecto creativo dedicado a diseñar experiencias íntimas y originales. Gabity se celebra cada año como celebración cercana de la Navidad y de la creatividad local.</p>
+              <p class="small" style="margin-top:8px;"><a href="#" target="_blank" rel="noopener">Más sobre Pipaon Esperientziak</a></p>
+            </article>
+
+            <article class="collab" aria-labelledby="saborTitle">
+              <h4 id="saborTitle">Saborium — Gastronomía gourmet</h4>
+              <p><strong>Saborium</strong> ofrece productos gourmet caseros — dulces y salados — diseñados para eventos exclusivos y celebraciones. Piezas pensadas para maridar con la experiencia Gabity.</p>
+              <p class="small" style="margin-top:8px;"><a href="https://saborium.vercel.app" target="_blank" rel="noopener">saborium.vercel.app</a></p>
+            </article>
+
+            <article class="collab" aria-labelledby="olaldeTitle">
+              <h4 id="olaldeTitle">Olalde — Espacio anfitrión</h4>
+              <p><strong>Olalde</strong> es el lugar que acoge este evento tan esperado, aportando el entorno perfecto para que Gabity cobre vida.</p>
+              <p class="small" style="margin-top:8px;"><a href="#" target="_blank" rel="noopener">Visitar Olalde</a></p>
+            </article>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: aside with tickets and reminders -->
+      <aside class="card ticket-area" aria-labelledby="ticketsTitle">
+        <h3 id="ticketsTitle" style="color:var(--accent);">Entradas (plazas limitadas)</h3>
+        <ul class="tickets-list" role="list">
+          <li class="ticket"><div><strong>Preferente</strong> — Sentado (mejor visibilidad)</div><div style="text-align:right">2,00 €</div></li>
+          <li class="ticket"><div><strong>General</strong> — Sentado (visibilidad reducida)</div><div style="text-align:right">1,50 €</div></li>
+          <li class="ticket"><div><strong>De Pie</strong> — Zona trasera (de pie)</div><div style="text-align:right">1,00 €</div></li>
+          <li class="ticket"><div><strong>Full Experience</strong> — Comida + Show exclusivo</div><div style="text-align:right">6,00 €</div></li>
+        </ul>
+
+        <div style="margin-top:14px;">
+          <p class="small">Disponibilidad: 2 unidades por tipo. Revisa tu selección en Eventbrite y trae tu comprobante. El pago se realiza en taquilla.</p>
+        </div>
+
+        <div style="margin-top:18px;">
+          <a class="buy" href="https://www.eventbrite.es/e/gabity-2025-donde-brilla-la-navidad-tickets-1971140592574?aff=oddtdtcreator" target="_blank" rel="noopener">Comprar en Eventbrite</a>
+        </div>
+      </aside>
+
+    </section>
+
+    <footer class="site-foot">
+      <p><strong>Gabity</strong> — Donde brilla la Navidad. © 2025. <span class="small">Organizado por Pipaon Esperientziak. Colaboradores: Saborium, Olalde.</span></p>
+    </footer>
+
+  </main>
+
+  <!-- background music (preload but do not autoplay; will start on user interaction) -->
+  <audio id="bgAudio" src="music.mp3" preload="auto" loop crossorigin="anonymous"></audio>
+
+<script>
+/* ============================
+   Utilities & initial setup
+   ============================ */
+
+(function(){
+  'use strict';
+
+  /* ---------- Settings ---------- */
+  const TARGET_ISO = '2025-11-30T19:25:00+01:00'; // Europe/Madrid explicit
+  const snowConfig = { density: 0.7, maxFlakes: 28 }; // lower density — light snow
+  const extremeSparks = 18;
+
+  /* ---------- Elements ---------- */
+  const hero = document.getElementById('hero');
+  const scrollBtn = document.getElementById('scrollBtn');
+  const content = document.getElementById('content');
+  const buyBtn = document.getElementById('buyBtn');
+  const cdDays = document.getElementById('cdDays');
+  const cdHours = document.getElementById('cdHours');
+  const cdMins = document.getElementById('cdMins');
+  const cdSecs = document.getElementById('cdSecs');
+  const extremeSwitch = document.getElementById('extremeSwitch');
+  const snowLayer = document.getElementById('snowLayer');
+  const bgAudio = document.getElementById('bgAudio');
+  const cursorBoot = document.getElementById('cursorBoot');
+
+  /* ---------- Smooth scroll behavior for the hero button ---------- */
+  scrollBtn.addEventListener('click', () => {
+    // Start music on first interaction (also handled globally)
+    startMusicOnce();
+    content.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  // Also allow pressing Enter/Space when button focused
+  scrollBtn.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter' || ev.key === ' ') {
+      ev.preventDefault();
+      scrollBtn.click();
     }
+  });
 
-    /* Countdown */
-    function updateCountdown() {
-      const target = new Date('November 30, 2025 19:25:00').getTime();
-      const now = Date.now();
-      const diff = target - now;
+  /* ---------- Countdown logic ---------- */
+  const targetTime = new Date(TARGET_ISO).getTime();
 
-      if (diff <= 0) {
-        document.getElementById('countdown').innerHTML = "¡Es hoy!";
-        return;
+  function pad(n) { return n.toString().padStart(2, '0'); }
+  function updateCountdown() {
+    const now = Date.now();
+    let diff = Math.max(0, targetTime - now);
+    const days = Math.floor(diff / (1000*60*60*24));
+    diff -= days*(1000*60*60*24);
+    const hours = Math.floor(diff / (1000*60*60));
+    diff -= hours*(1000*60*60);
+    const mins = Math.floor(diff / (1000*60));
+    diff -= mins*(1000*60);
+    const secs = Math.floor(diff / 1000);
+
+    cdDays.textContent = days;
+    cdHours.textContent = pad(hours);
+    cdMins.textContent = pad(mins);
+    cdSecs.textContent = pad(secs);
+
+    if (targetTime - Date.now() <= 0) {
+      // event started
+      cdDays.textContent = '0';
+      cdHours.textContent = '00';
+      cdMins.textContent = '00';
+      cdSecs.textContent = '00';
+      // Optionally display an active message
+      // stop interval if desired
+    }
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  /* ---------- Snow implementation (light & performant) ---------- */
+  // Create CSS-based snowflakes (using text ❄). We create up to maxFlakes and recycle them.
+  const flakes = [];
+  const maxFlakes = Math.max(8, Math.min(60, Math.floor(snowConfig.maxFlakes * snowConfig.density)));
+
+  for (let i=0;i<maxFlakes;i++){
+    const el = document.createElement('div');
+    el.className = 'snowflake';
+    el.style.left = (Math.random() * 100) + 'vw';
+    el.style.top = (-10 - Math.random()*20) + 'vh';
+    const size = 10 + Math.random()*16;
+    el.style.fontSize = size + 'px';
+    el.style.opacity = 0.7 + Math.random()*0.3;
+    el.dataset.speed = (0.6 + Math.random() * 1.2).toFixed(2); // speed multiplier
+    el.textContent = '❄';
+    snowLayer.appendChild(el);
+    flakes.push(el);
+  }
+
+  // animate flakes with requestAnimationFrame for fluidity
+  let lastTs = performance.now();
+  function snowStep(ts){
+    const delta = (ts - lastTs) / 1000;
+    lastTs = ts;
+    for (let i=0;i<flakes.length;i++){
+      const f = flakes[i];
+      const speed = parseFloat(f.dataset.speed);
+      let top = parseFloat(f.style.top);
+      top += (20 * speed) * delta; // px per second ~ adjusted for viewport use
+      let left = parseFloat(f.style.left);
+      // small horizontal sway
+      left = left + Math.sin((ts/1000) + i) * 0.08 * speed;
+      // convert left to vw units safe
+      if (isNaN(left)) left = (Math.random()*100);
+      if (top > 110) {
+        // recycle to top
+        top = -5 - Math.random()*10;
+        left = (Math.random() * 100);
+        f.style.left = left + 'vw';
+        f.style.top = top + 'vh';
+      } else {
+        f.style.top = top + 'vh';
+        f.style.left = left + 'vw';
       }
-
-      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const m = Math.floor((diff / (1000 * 60)) % 60);
-      const s = Math.floor((diff / 1000) % 60);
-
-      document.getElementById('countdown').innerHTML = `${d}d ${h}h ${m}m ${s}s`;
     }
-    setInterval(updateCountdown, 1000);
+    requestAnimationFrame(snowStep);
+  }
+  requestAnimationFrame(snowStep);
 
-    /* Snow generator */
-    function createSnowflake() {
-      const snow = document.createElement('div');
-      snow.className = 'snowflake';
-      snow.innerHTML = '❄';
-      snow.style.left = Math.random() * 100 + 'vw';
-      snow.style.animationDuration = 3 + Math.random() * 5 + 's';
-      document.body.appendChild(snow);
-      setTimeout(() => snow.remove(), 8000);
-    }
-    setInterval(createSnowflake, 800);
-  </script>
-  <audio id="bgmusic" src="music.mp3" preload="auto"></audio>
-  <script>
-    let musicStarted = false;
-    function enableMusic() {
-      if (!musicStarted) {
-        document.getElementById('bgmusic').play();
-        musicStarted = true;
+  /* ---------- Background music control (play on interaction) ---------- */
+  let musicStarted = false;
+  function startMusicOnce() {
+    if (musicStarted) return;
+    musicStarted = true;
+    try {
+      // try to set volume moderate
+      bgAudio.volume = 0.55;
+      const playPromise = bgAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Autoplay likely blocked; will start on next touch/click
+        });
       }
+    } catch (err) {
+      // ignore
     }
-    document.addEventListener('click', enableMusic);
-    document.addEventListener('touchstart', enableMusic);
-  </script>
+  }
+
+  // start music on first user gesture (click/touch/keydown)
+  function onFirstUserGesture() { startMusicOnce(); removeListeners(); }
+  function removeListeners() {
+    window.removeEventListener('click', onFirstUserGesture);
+    window.removeEventListener('touchstart', onFirstUserGesture);
+    window.removeEventListener('keydown', onFirstUserGesture);
+  }
+  window.addEventListener('click', onFirstUserGesture, { once:true });
+  window.addEventListener('touchstart', onFirstUserGesture, { once:true });
+  window.addEventListener('keydown', onFirstUserGesture, { once:true });
+
+  /* ---------- Custom cursor (boot) follow ---------- */
+  let hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+  if (hasFinePointer && cursorBoot) {
+    cursorBoot.style.display = 'block';
+    // Position follow
+    window.addEventListener('mousemove', (ev) => {
+      // Slight easing via transform, we set directly for responsiveness
+      cursorBoot.style.transform = `translate(${ev.clientX}px, ${ev.clientY}px) translate(-50%,-50%)`;
+    }, { passive:true });
+    // Hide cursorBoot when over interactive elements to avoid obscuring
+    const interactive = 'a,button,input,textarea,select,label';
+    document.addEventListener('mouseover', (e) => {
+      if (e.target.closest(interactive)) cursorBoot.style.opacity = '0.18';
+      else cursorBoot.style.opacity = '1';
+    }, true);
+  }
+
+  /* ---------- Extreme mode visuals ---------- */
+  extremeSwitch.addEventListener('change', (e) => {
+    const on = extremeSwitch.checked;
+    document.body.classList.toggle('extreme', on);
+    // play a short brightening effect and sparkles when enabling
+    if (on) {
+      spawnSparks(extremeSparks);
+      // If music not started, start it (to avoid surprises)
+      startMusicOnce();
+    }
+  });
+
+  function spawnSparks(n) {
+    for (let i=0;i<n;i++){
+      const s = document.createElement('div');
+      s.className = 'spark';
+      const colors = ['#ff5b5b','#fff2b0','#7efc9a','#7ec8ff'];
+      s.style.background = colors[Math.floor(Math.random()*colors.length)];
+      s.style.left = (Math.random()*95) + 'vw';
+      s.style.top = (Math.random()*95) + 'vh';
+      s.style.transform = 'scale(0.3)';
+      s.style.opacity = '0.98';
+      s.style.transition = 'transform 700ms cubic-bezier(.2,.9,.3,1), opacity 900ms ease-out';
+      document.body.appendChild(s);
+      // animate
+      requestAnimationFrame(()=>{ s.style.transform = 'scale(1.6)'; s.style.opacity = '0'; });
+      setTimeout(()=>{ s.remove(); }, 1200);
+    }
+  }
+
+  /* ---------- Performance notes: limit DOM churn ---------- */
+  // The site intentionally uses CSS animations + a single rAF loop for snow.
+  // Sparks are transient and removed quickly.
+
+  /* ---------- Accessibility & keyboard shortcuts ---------- */
+  // Press "m" to toggle extreme mode (keyboard shortcut)
+  window.addEventListener('keydown', (ev) => {
+    if (ev.key === 'm' || ev.key === 'M') {
+      extremeSwitch.checked = !extremeSwitch.checked;
+      extremeSwitch.dispatchEvent(new Event('change'));
+    }
+    // Press 'b' to jump to buy
+    if (ev.key === 'b' || ev.key === 'B') {
+      buyBtn.focus();
+      buyBtn.click();
+    }
+  });
+
+  /* ---------- Small visual polish: parallax-ish hero tint on scroll ---------- */
+  window.addEventListener('scroll', () => {
+    const h = hero.getBoundingClientRect().height;
+    const sc = Math.min(1, window.scrollY / Math.max(180, h * 0.5));
+    hero.style.filter = `brightness(${1 - sc*0.15}) saturate(${1 - sc*0.06})`;
+    // subtle border glow increase when scrolling
+    document.body.style.setProperty('--scroll', sc);
+  }, { passive:true });
+
+  /* ---------- Ready: quick hint for user on mobile ---------- */
+  // Create a small non-intrusive toast the first time user opens with instructions
+  const TOAST_KEY = 'gabity_toast_seen_v1';
+  if (!localStorage.getItem(TOAST_KEY)) {
+    setTimeout(()=> {
+      showToast('Toca la pantalla para activar la música. Usa el interruptor "Modo Navidad Extremo" para efectos extra.');
+      localStorage.setItem(TOAST_KEY, '1');
+    }, 1200);
+  }
+
+  function showToast(text) {
+    const t = document.createElement('div');
+    t.style.position = 'fixed';
+    t.style.left = '50%';
+    t.style.bottom = '26px';
+    t.style.transform = 'translateX(-50%)';
+    t.style.background = 'rgba(0,0,0,0.6)';
+    t.style.color = '#fff';
+    t.style.padding = '10px 16px';
+    t.style.borderRadius = '999px';
+    t.style.boxShadow = '0 8px 30px rgba(0,0,0,0.6)';
+    t.style.zIndex = '99999';
+    t.style.fontSize = '13px';
+    t.textContent = text;
+    document.body.appendChild(t);
+    setTimeout(()=> { t.style.transition = 'opacity 500ms ease'; t.style.opacity = '0'; }, 4200);
+    setTimeout(()=> { t.remove(); }, 4800);
+  }
+
+  /* ---------- Clean up for mobile: ensure hero fits viewport exactly ---------- */
+  function setHeroHeight(){
+    hero.style.height = window.innerHeight + 'px';
+  }
+  setHeroHeight();
+  window.addEventListener('resize', setHeroHeight);
+
+})(); // end IIFE
+</script>
+
 </body>
 </html>
