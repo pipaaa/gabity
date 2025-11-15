@@ -1,403 +1,194 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gabity – Donde brilla la Navidad</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gabity 2025 – Donde Brilla la Navidad</title>
 <style>
-/* ----------------------------------------------------------
-   ESTILOS GENERALES
------------------------------------------------------------ */
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Poppins', sans-serif; overflow-x:hidden; background:#000; }
 
-html,body{
-    margin:0;
-    padding:0;
-    overflow-x:hidden;
-    background:#000;
-    font-family: 'Poppins', sans-serif;
-    cursor:none;
+/* Custom Cursor (Santa Boot) */
+body, button, a {
+  cursor: url('boot.png') 10 10, auto;
 }
 
-/* Cursor personalizado: bota pequeña */
-.custom-cursor{
-    width:24px;
-    height:24px;
-    position:fixed;
-    top:0; left:0;
-    pointer-events:none;
-    background-image:url('botanavidad.png');
-    background-size:contain;
-    background-repeat:no-repeat;
-    z-index:9999;
+/* Intro Video */
+#gabity-intro {
+  position:fixed; inset:0; width:100%; height:100%; background:#000;
+  display:flex; justify-content:center; align-items:center;
+  flex-direction:column; z-index:999999; transition:opacity 1s ease;
+}
+#gabity-intro video { width:100%; height:100%; object-fit:cover; position:absolute; }
+#enterGabity {
+  position:relative; z-index:2; padding:20px 45px; font-size:1.8rem;
+  border:none; background:#ffcf3f; border-radius:14px; font-weight:bold;
+  box-shadow:0 0 25px rgba(255,200,0,0.9); cursor:pointer;
+  animation: pulse 1.5s infinite alternate;
+}
+@keyframes pulse { from{transform:scale(1);} to{transform:scale(1.08);} }
+
+/* Hero Section */
+.hero {
+  width:100vw; height:100vh;
+  background:url('fondo.png') center/cover no-repeat fixed;
+  display:flex; justify-content:flex-end; align-items:flex-end;
+  flex-direction:column; position:relative;
+}
+@media (max-width:768px) {
+  .hero { background:url('fondomovil.png') center/cover no-repeat fixed; }
 }
 
-/* Fondo general */
-#hero{
-    width:100vw;
-    height:100vh;
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-    display:flex;
-    justify-content:center;
-    align-items:flex-end;
-    position:relative;
-}
-
-/* Mobile background swap */
-@media (max-width:768px){
-    #hero{
-        background-image:url('fondomovil.png') !important;
-    }
-}
-
-/* Flecha minimalista */
-.scroll-arrow{
-    position:absolute;
-    bottom:40px;
-    width:40px;
-    height:40px;
-    border-left:3px solid white;
-    border-bottom:3px solid white;
-    transform:rotate(-45deg);
-    cursor:none;
-    animation:bounce 1.8s infinite ease-in-out;
+.scroll-arrow {
+  font-size:3rem; color:white; margin-bottom:40px;
+  animation:bounce 1.5s infinite;
 }
 @keyframes bounce {
-    0%,100%{ transform:translateY(0) rotate(-45deg); }
-    50%{ transform:translateY(10px) rotate(-45deg); }
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-10px); }
 }
 
-/* ----------------------------------------------------------
-    SECCIÓN DESCRIPCIÓN
------------------------------------------------------------ */
-#content{
-    background:rgba(0,0,0,0.65);
-    padding:80px 20px;
-    text-align:center;
-    color:white;
+/* Content Section */
+section { padding:80px 20px; color:white; text-align:center; }
+
+/* Countdown */
+#countdown {
+  font-size:4rem; font-weight:900; margin-top:40px;
+  text-shadow:0 0 20px white;
+}
+@media (max-width:768px){
+  #countdown { font-size:2.5rem; }
 }
 
-#content h1{
-    font-size:3rem;
-    margin-bottom:20px;
-    text-shadow:0 0 12px #fff;
+/* Snow */
+.snowflake {
+  position:fixed; top:-10px; color:white; opacity:0.8;
+  animation:fall linear infinite;
+}
+@keyframes fall {
+  to { transform:translateY(110vh) rotate(360deg); }
 }
 
-#content p{
-    max-width:800px;
-    margin:auto;
-    font-size:1.3rem;
+/* Extreme Mode */
+#extremeSwitch { transform:scale(1.5); margin-right:10px; }
+body.extreme {
+  filter:brightness(1.3) saturate(1.5);
+  animation:extremeLights 2s infinite;
+}
+@keyframes extremeLights {
+  0%{ box-shadow:0 0 40px red inset; }
+  50%{ box-shadow:0 0 40px green inset; }
+  100%{ box-shadow:0 0 40px gold inset; }
 }
 
-/* Botón entradas */
-.button{
-    padding:16px 34px;
-    background:#e60000;
-    border:none;
-    border-radius:12px;
-    color:white;
-    font-size:1.3rem;
-    margin-top:25px;
-    transition:0.25s;
-    cursor:none !important;
+/* Buttons */
+.button-primary {
+  padding:18px 40px; background:#e8b400; border-radius:12px;
+  color:#4a1a00; text-decoration:none; font-size:1.4rem; font-weight:bold;
+  box-shadow:0 0 20px rgba(255,200,0,0.6);
 }
-.button:hover{
-    opacity:0.8;
-}
-
-/* ----------------------------------------------------------
-   CUENTA ATRÁS ÉPICA
------------------------------------------------------------ */
-#countdown{
-    font-size:3rem;
-    margin-top:50px;
-    text-shadow:0 0 25px white;
-    font-weight:700;
-}
-
-/* Nieve */
-.snowflake{
-    position:fixed;
-    top:-10px;
-    font-size:12px;
-    color:white;
-    user-select:none;
-    pointer-events:none;
-    z-index:5000;
-}
-
-/* ----------------------------------------------------------
-   MODO NAVIDAD EXTREMA
------------------------------------------------------------ */
-#extreme-btn{
-    position:fixed;
-    bottom:30px;
-    right:30px;
-    padding:14px 26px;
-    background:#00bfff;
-    border:none;
-    border-radius:14px;
-    cursor:none;
-    color:white;
-    font-size:1.1rem;
-    z-index:9000;
-}
-
-/* Luces navideñas borde */
-.lights{
-    position:fixed;
-    top:0; left:0;
-    width:100%;
-    height:100%;
-    pointer-events:none;
-    z-index:4000;
-    display:none;
-}
-.light{
-    width:12px;
-    height:12px;
-    background:red;
-    border-radius:50%;
-    position:absolute;
-    animation:blink 1.2s infinite alternate;
-}
-@keyframes blink{
-    from{ opacity:1; }
-    to{ opacity:0.15; }
-}
-
-/* ----------------------------------------------------------
-   INTERRUPTOR MÚSICA
------------------------------------------------------------ */
-#music-toggle{
-    position:fixed;
-    bottom:30px;
-    left:30px;
-    width:60px;
-    height:34px;
-    background:#555;
-    border-radius:20px;
-    cursor:none;
-    display:flex;
-    align-items:center;
-    padding:3px;
-    z-index:9000;
-}
-#music-toggle .circle{
-    width:28px;
-    height:28px;
-    background:white;
-    border-radius:50%;
-    transition:0.3s;
-}
-
-/* ----------------------------------------------------------
-   VIDEO INICIAL
------------------------------------------------------------ */
-#intro-video{
-    position:fixed;
-    top:0; left:0;
-    width:100vw;
-    height:100vh;
-    z-index:10000;
-    background:black;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-#intro-video video{
-    width:90%;
-    max-width:900px;
-}
-#skip-btn{
-    position:absolute;
-    bottom:40px;
-    right:40px;
-    padding:12px 28px;
-    background:rgba(255,255,255,0.7);
-    border:none;
-    border-radius:10px;
-    font-size:1.2rem;
-    cursor:none;
-}
-
 </style>
 </head>
-
 <body>
 
-<div class="custom-cursor" id="cursor"></div>
-
-<!-- VIDEO INICIAL -->
-<div id="intro-video">
-    <video src="spotencendido1.mp4" autoplay muted></video>
-    <button id="skip-btn" style="display:none;">Saltar</button>
+<!-- INTRO -->
+<div id="gabity-intro">
+  <video id="gabity-intro-video" src="video.mp4"></video>
+  <button id="enterGabity">Entrar a Gabity</button>
 </div>
 
 <!-- HERO -->
-<div id="hero" style="background-image:url('fondo.png');">
-    <div class="scroll-arrow" id="scroll-arrow"></div>
+<div class="hero">
+  <div class="scroll-arrow">⬇️</div>
 </div>
 
-<!-- CONTENIDO -->
-<div id="content">
+<!-- DESCRIPTION -->
+<section id="descripcion">
+  <h1 style="font-size:3rem; text-shadow:0 0 20px #fff;">Gabity 2025 – Donde Brilla la Navidad</h1>
+  <p style="font-size:1.4rem; margin-top:20px; max-width:800px; margin:auto;">
+    El evento navideño más esperado del año. Magia, luces, emoción y una experiencia
+    totalmente única. Este año, con más sorpresas que nunca.
+  </p>
 
-    <h1>Gabity – Donde brilla la Navidad</h1>
+  <!-- Countdown -->
+  <div id="countdown"></div>
 
-    <p>
-        El evento más mágico del año llega a Olalde.  
-        Vive un espectáculo único lleno de luz, emoción y sorpresas.  
-        ¡Las entradas van subiendo de precio cada día a medida que se acerca el 30 de noviembre!
-    </p>
+  <div style="margin-top:40px;">
+    <a class="button-primary" href="https://www.eventbrite.es/e/gabity-2025-donde-brilla-la-navidad-tickets-1971140592574?aff=oddtdtcreator">Comprar Entradas</a>
+  </div>
 
-    <div id="countdown">00 : 00 : 00 : 00</div>
+  <p style="margin-top:25px; font-size:1.2rem; color:#f99;">
+    ⚠️ Las entradas subirán de precio cada día al acercarse la fecha. ¡Aprovecha ahora!
+  </p>
 
-    <a href="https://www.eventbrite.es/e/gabity-2025-donde-brilla-la-navidad-tickets-1971140592574?aff=oddtdtcreator" target="_blank">
-        <button class="button" onclick="alert('⚠️ ATENCIÓN: los precios subirán más cada día. ¡No esperes!')">
-            Comprar entradas
-        </button>
-    </a>
+  <div style="margin-top:50px; font-size:1.2rem;">
+    <label>
+      <input type="checkbox" id="extremeSwitch"> Activar Modo Navidad Extremo 🎄
+    </label>
+  </div>
+</section>
 
-</div>
+<!-- COLABORADORES -->
+<section>
+  <h2 style="font-size:2.5rem;">Colaboradores</h2>
 
-<!-- BOTÓN MÚSICA -->
-<div id="music-toggle">
-    <div class="circle"></div>
-</div>
-
-<!-- BOTÓN NAVIDAD EXTREMA -->
-<button id="extreme-btn">Modo Navidad Extrema</button>
-
-<!-- LUCES NAVIDEÑAS -->
-<div class="lights" id="lights"></div>
-
-<!-- AUDIO -->
-<audio id="music" src="musica.mp3" loop></audio>
-
+  <div style="margin-top:40px; max-width:900px; margin:auto; font-size:1.3rem;">
+    <p><strong>Pipaon Esperientziak</strong> – Productores de Gabity desde sus inicios, llevando la magia desde hace años.</p>
+    <p><strong>Saborium</strong> – Gastronomía gourmet casera, dulces y salados. <a href="https://saborium.vercel.app">Web</a></p>
+    <p><strong>Olalde</strong> – El hogar donde cada año renace la magia del evento.</p>
+  </div>
+</section>
 
 <script>
-/* ----------------------------------------------------------
-   CURSOR BOOT NAVIDEÑA
------------------------------------------------------------ */
-const cursor = document.getElementById("cursor");
-document.addEventListener("mousemove", e=>{
-    cursor.style.left = e.pageX + "px";
-    cursor.style.top = e.pageY + "px";
-});
-
-/* Evitar que desaparezca al clic */
-document.addEventListener("mousedown", ()=> cursor.style.opacity=1);
-document.addEventListener("mouseup", ()=> cursor.style.opacity=1);
-
-/* ----------------------------------------------------------
-   VIDEO CON SALTO
------------------------------------------------------------ */
-const intro = document.getElementById("intro-video");
-const skip = document.getElementById("skip-btn");
-
-setTimeout(()=> skip.style.display="block", 5000);
-skip.onclick = ()=> intro.style.display="none";
-
-document.querySelector("#intro-video video").addEventListener("ended", ()=>{
-    intro.style.display="none";
-});
-
-/* ----------------------------------------------------------
-   SCROLL
------------------------------------------------------------ */
-document.getElementById("scroll-arrow").onclick = ()=>{
-    window.scrollTo({ top: window.innerHeight, behavior:"smooth"});
+// Intro logic
+const intro = document.getElementById('gabity-intro');
+const introVideo = document.getElementById('gabity-intro-video');
+const enterBtn = document.getElementById('enterGabity');
+let shown = localStorage.getItem('gabity_intro');
+if (!shown) introVideo.play(); else intro.remove();
+enterBtn.onclick = () => {
+  introVideo.muted = false;
+  introVideo.currentTime = 0;
+  introVideo.play();
+  setTimeout(()=>{
+    intro.style.opacity = 0;
+    setTimeout(()=>intro.remove(),1000);
+  },500);
+  localStorage.setItem('gabity_intro','yes');
 };
 
-/* ----------------------------------------------------------
-   CUENTA ATRÁS ÉPICA
------------------------------------------------------------ */
-function updateCountdown(){
-    const eventDate = new Date("November 30, 2025 19:25:00").getTime();
-    const now = new Date().getTime();
-    let diff = eventDate - now;
-
-    if(diff < 0){
-        document.getElementById("countdown").innerHTML = "¡Ya empieza!";
-        return;
-    }
-
-    let d = Math.floor(diff / (1000*60*60*24));
-    let h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-    let m = Math.floor((diff%(1000*60*60))/(1000*60));
-    let s = Math.floor((diff%(1000*60))/1000);
-
-    document.getElementById("countdown").innerHTML =
-        `${d}d : ${h}h : ${m}m : ${s}s`;
+// Snow
+function snow(){
+  const s=document.createElement('div');
+  s.className='snowflake';
+  s.innerHTML='❄';
+  s.style.left=Math.random()*100+'vw';
+  s.style.fontSize=(Math.random()*20+10)+'px';
+  s.style.animationDuration=(Math.random()*5+5)+'s';
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),8000);
 }
-setInterval(updateCountdown, 1000);
+setInterval(snow,500);
 
-/* ----------------------------------------------------------
-   NIEVE SUAVE
------------------------------------------------------------ */
-function createSnow(){
-    const snow = document.createElement("div");
-    snow.classList.add("snowflake");
-    snow.innerHTML = "❄";
-    snow.style.left = Math.random()*window.innerWidth + "px";
-    snow.style.opacity = Math.random();
-    snow.style.fontSize = (12 + Math.random()*14) + "px";
-    document.body.appendChild(snow);
-
-    let fall = setInterval(()=>{
-        snow.style.top = (snow.offsetTop + 1) + "px";
-        if(snow.offsetTop > window.innerHeight){
-            snow.remove();
-            clearInterval(fall);
-        }
-    }, 15);
-}
-setInterval(createSnow, 150);
-
-/* ----------------------------------------------------------
-   MODO NAVIDAD EXTREMA
------------------------------------------------------------ */
-const extremeBtn = document.getElementById("extreme-btn");
-const lights = document.getElementById("lights");
-
-extremeBtn.onclick = ()=>{
-    lights.style.display = lights.style.display === "none" ? "block" : "none";
-    if(lights.children.length === 0){
-        for(let i=0;i<60;i++){
-            let l=document.createElement("div");
-            l.classList.add("light");
-            l.style.top = (i<15?0:i<30? "100%": Math.random()*100+"%");
-            l.style.left = (i>=30?0:i<45? "100%": Math.random()*100+"%");
-            l.style.background = ["red","green","yellow","blue"][Math.floor(Math.random()*4)];
-            l.style.animationDuration = (0.8+Math.random()*1.5)+"s";
-            lights.appendChild(l);
-        }
-    }
+// Extreme Mode
+const extreme=document.getElementById('extremeSwitch');
+extreme.onchange=()=>{
+  if(extreme.checked) document.body.classList.add('extreme');
+  else document.body.classList.remove('extreme');
 };
 
-/* ----------------------------------------------------------
-   INTERRUPTOR MÚSICA
------------------------------------------------------------ */
-const musicToggle = document.getElementById("music-toggle");
-const musicCircle = musicToggle.querySelector(".circle");
-const audio = document.getElementById("music");
-
-let musicOn = false;
-
-musicToggle.onclick = ()=>{
-    musicOn = !musicOn;
-    if(musicOn){
-        musicCircle.style.transform="translateX(26px)";
-        audio.play();
-    }else{
-        musicCircle.style.transform="translateX(0px)";
-        audio.pause();
-    }
-};
-
+// Countdown
+const target=new Date('Nov 30, 2025 19:25:00').getTime();
+setInterval(()=>{
+  let now=new Date().getTime();
+  let d=target-now;
+  if(d<0) d=0;
+  let days=Math.floor(d/(1000*60*60*24));
+  let hours=Math.floor((d%(1000*60*60*24))/(1000*60*60));
+  let min=Math.floor((d%(1000*60*60))/(1000*60));
+  let sec=Math.floor((d%(1000*60))/1000);
+  document.getElementById('countdown').innerText=`${days}d ${hours}h ${min}m ${sec}s`;
+},1000);
 </script>
-
 </body>
 </html>
