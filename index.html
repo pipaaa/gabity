@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gabity 2025 - Donde Brilla la Navidad</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -12,7 +14,7 @@
         }
 
         body {
-            font-family: 'Georgia', serif;
+            font-family: 'Montserrat', sans-serif;
             background: #0a0e27;
             color: #fff;
             overflow-x: hidden;
@@ -73,7 +75,8 @@
             border: none;
             border-radius: 50px;
             cursor: none;
-            font-family: 'Georgia', serif;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
             box-shadow: 0 10px 30px rgba(196, 30, 58, 0.5);
             transition: transform 0.3s ease;
             z-index: 10000;
@@ -81,6 +84,20 @@
 
         #enter-btn:hover {
             transform: scale(1.05);
+        }
+
+        #skip-message {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 14px;
+            z-index: 10001;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            display: none;
         }
 
         /* Hero Section */
@@ -170,6 +187,7 @@
             font-style: italic;
             color: #ffd700;
             margin-top: 30px;
+            font-weight: 300;
         }
 
         /* Countdown */
@@ -242,67 +260,7 @@
         }
 
         /* Extreme Mode Toggle */
-        .extreme-mode {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px 25px;
-            border-radius: 50px;
-            backdrop-filter: blur(10px);
-        }
-
-        .extreme-label {
-            font-size: 0.9em;
-            letter-spacing: 1px;
-        }
-
-        .toggle-switch {
-            width: 60px;
-            height: 30px;
-            background: #444;
-            border-radius: 30px;
-            position: relative;
-            cursor: none;
-            transition: background 0.3s ease;
-        }
-
-        .toggle-switch.active {
-            background: linear-gradient(135deg, #c41e3a, #ffd700);
-        }
-
-        .toggle-slider {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            background: white;
-            border-radius: 50%;
-            top: 3px;
-            left: 3px;
-            transition: left 0.3s ease;
-        }
-
-        .toggle-switch.active .toggle-slider {
-            left: 33px;
-        }
-
-        /* Extreme Mode Effects */
-        body.extreme-mode {
-            filter: brightness(1.2) saturate(1.5);
-        }
-
-        body.extreme-mode .container {
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            0% { text-shadow: 0 0 10px #c41e3a, 0 0 20px #165b33, 0 0 30px #ffd700; }
-            100% { text-shadow: 0 0 20px #c41e3a, 0 0 30px #165b33, 0 0 40px #ffd700; }
-        }
+        /* REMOVED - Extreme Mode feature disabled */
 
         /* Colaboradores */
         .colaboradores {
@@ -399,15 +357,10 @@
             <source src="spotencendido1.mp4" type="video/mp4">
         </video>
         <button id="enter-btn">Entrar a Gabity</button>
+        <div id="skip-message">Pasar el vídeo en <span id="skip-timer">5</span> segundos</div>
     </div>
 
-    <!-- Extreme Mode Toggle -->
-    <div class="extreme-mode">
-        <span class="extreme-label">Navidad Extremo™</span>
-        <div class="toggle-switch" id="extreme-toggle">
-            <div class="toggle-slider"></div>
-        </div>
-    </div>
+    <!-- Extreme Mode Toggle REMOVED -->
 
     <!-- Audio Control -->
     <div class="audio-control" id="audio-btn">🔊</div>
@@ -431,7 +384,7 @@
                 El Encendido de Luces es el momento más esperado: una experiencia íntima, cuidada al detalle y diseñada para despertar esa sensación de magia que solo la Navidad puede dar.
                 Este 2025, Gabity vuelve más especial que nunca, con colaboraciones, mejoras y un ambiente inolvidable.
             </p>
-            <p class="tagline">Ven a vivir la Navidad como si fuera una película.</p>
+            <p class="tagline">Donde brilla la Navidad.</p>
         </section>
 
         <!-- Countdown -->
@@ -505,18 +458,37 @@
         const introOverlay = document.getElementById('intro-overlay');
         const introVideo = document.getElementById('intro-video');
         const enterBtn = document.getElementById('enter-btn');
+        const skipMessage = document.getElementById('skip-message');
+        const skipTimer = document.getElementById('skip-timer');
         const bgAudio = document.getElementById('bg-audio');
         
         if (!localStorage.getItem('gabity-visited')) {
             enterBtn.addEventListener('click', () => {
+                enterBtn.style.display = 'none';
                 introVideo.muted = false;
                 introVideo.currentTime = 0;
                 introVideo.play();
                 bgAudio.play();
-                setTimeout(() => {
+                
+                skipMessage.style.display = 'block';
+                let timeLeft = 5;
+                
+                const countdown = setInterval(() => {
+                    timeLeft--;
+                    skipTimer.textContent = timeLeft;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+                        introOverlay.classList.add('hidden');
+                        localStorage.setItem('gabity-visited', 'true');
+                    }
+                }, 1000);
+                
+                skipMessage.addEventListener('click', () => {
+                    clearInterval(countdown);
                     introOverlay.classList.add('hidden');
                     localStorage.setItem('gabity-visited', 'true');
-                }, 3000);
+                });
             });
         } else {
             introOverlay.style.display = 'none';
@@ -539,15 +511,7 @@
         updateCountdown();
         setInterval(updateCountdown, 1000);
 
-        // Extreme Mode
-        const extremeToggle = document.getElementById('extreme-toggle');
-        extremeToggle.addEventListener('click', () => {
-            extremeToggle.classList.toggle('active');
-            document.body.classList.toggle('extreme-mode');
-            if (document.body.classList.contains('extreme-mode')) {
-                createExtraSnow();
-            }
-        });
+        // Extreme Mode REMOVED
 
         // Snow Effect
         function createSnowflake() {
@@ -561,12 +525,6 @@
             document.body.appendChild(snowflake);
             
             setTimeout(() => snowflake.remove(), 8000);
-        }
-
-        function createExtraSnow() {
-            for (let i = 0; i < 10; i++) {
-                setTimeout(createSnowflake, i * 200);
-            }
         }
 
         setInterval(createSnowflake, 400);
