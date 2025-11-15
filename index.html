@@ -1,36 +1,204 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
-    <title>Gabity - Inicio</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gabity — Encendido de Luz 2025</title>
+  <style>
+    :root{
+      --accent:#f3c44a;
+      --muted:#e6e6e6;
+      --bg:#0b0b0c;
+      --glass: rgba(255,255,255,0.06);
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    html,body{height:100%;margin:0;background:#080808;color:#fff}
+    /* HERO fullscreen */
+    .hero{
+      position:relative;height:100vh;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;
+      background-size:cover;background-position:center center;background-repeat:no-repeat; 
+      /* Replace 'hero.jpg' with your photo file */
+      background-image: url('hero.jpg');
+    }
+    .overlay{position:absolute;inset:0;background:linear-gradient(180deg, rgba(6,6,8,0.35), rgba(6,6,8,0.6));}
+    .topbar{position:absolute;left:24px;top:18px;display:flex;align-items:center;gap:12px;z-index:4}
+    .topbar img{height:48px;width:auto;display:block}
+
+    .hero-center{position:relative;z-index:3;text-align:center;padding:40px}
+    .title{font-size:40px;letter-spacing:1px;margin:0;color:var(--accent);text-shadow:0 6px 24px rgba(0,0,0,0.6)}
+    .subtitle{margin-top:8px;color:#fff;opacity:0.95}
+
+    /* down arrow */
+    .down-arrow{position:absolute;left:50%;transform:translateX(-50%);bottom:36px;z-index:5;cursor:pointer}
+    .arrow-wrap{width:56px;height:56px;border-radius:999px;background:var(--glass);display:flex;align-items:center;justify-content:center;backdrop-filter: blur(4px);box-shadow:0 6px 18px rgba(0,0,0,0.5)}
+    .arrow{border:solid #fff;border-width:0 3px 3px 0;display:inline-block;padding:10px;transform:rotate(45deg);}
+    .arrow-small{width:16px;height:16px}
+    .arrow-wrap:hover{transform:translateY(-4px)}
+
+    /* CONTENT */
+    .content{min-height:100vh;background:#070707;padding:64px 20px 120px;display:flex;flex-direction:column;gap:36px}
+    .container{max-width:1000px;margin:0 auto}
+
+    .description{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
+
+    .meta{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+    .countdown{font-weight:700;font-size:28px;background:linear-gradient(90deg,#fff,#f3c44a);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .btn{display:inline-block;padding:12px 18px;border-radius:10px;background:var(--accent);color:#111;text-decoration:none;font-weight:700}
+
+    .cols{display:grid;grid-template-columns:1fr 320px;gap:28px}
+    .collabs{display:flex;flex-direction:column;gap:16px}
+    .collab{background:var(--glass);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+    .collab h4{margin:0 0 6px 0}
+    .collab p{margin:0;color:#ddd;font-size:14px}
+    .collab a{color:var(--accent);text-decoration:none;font-weight:600}
+
+    footer{margin-top:20px;color:#bdbdbd;font-size:13px;text-align:center}
+
+    /* responsive */
+    @media(max-width:880px){.cols{grid-template-columns:1fr}.countdown{font-size:22px}}
+  </style>
 </head>
 <body>
-    <div class="navbar">
-        <div class="menu-icon" onclick="toggleMenu()">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
-        <div class="logo-container">
-            <img src="logo.png" alt="Gabity Logo">
-        </div>
-        <div class="menu">
-            <!-- Aquí puedes agregar enlaces a otras páginas -->
-            <a href="#">Inicio</a>
-            <a href="#">Eventos</a>
-            <a href="#">Compra de Boletos</a>
-            <a href="#">Galería</a>
-            <a href="#">Contacto</a>
-        </div>
+  <header class="hero" id="hero">
+    <div class="overlay"></div>
+    <div class="topbar">
+      <img src="logo.png" alt="Gabity logo" />
     </div>
 
-    <header class="hero">
-        <h1>Bienvenido a Gabity</h1>
-        <p>Tu destino para celebrar la Navidad en grande.</p>
-    </header>
+    <div class="hero-center">
+      <h1 class="title">Encendido de Luces 2025</h1>
+      <p class="subtitle">Gabity: Donde brilla la Navidad</p>
+    </div>
 
+    <div class="down-arrow" id="scrollArrow" title="Bajar">
+      <div class="arrow-wrap"><i class="arrow arrow-small"></i></div>
+    </div>
+  </header>
+
+  <main class="content" id="content">
+    <div class="container">
+      <section class="description">
+        <h2>Encendido de Luz 2025 — Gabity</h2>
+        <p>Vive una experiencia inmersiva y breve en la que, juntos, reactivaremos la Navidad de Gabity. El encendido dura aproximadamente <strong>7 minutos</strong> y tendrá una sorpresa exclusiva para quienes lo disfruten en directo. No revelamos detalles: ven y descúbrelo.</p>
+
+        <div class="meta" style="margin-top:18px;gap:12px;">
+          <div>
+            <div style="font-size:13px;color:#ccc">Cuenta atrás</div>
+            <div class="countdown" id="countdown">Cargando...</div>
+          </div>
+
+          <div style="margin-left:auto">
+            <a class="btn" href="https://www.eventbrite.es/e/gabity-2025-donde-brilla-la-navidad-tickets-1971140592574?aff=oddtdtcreator" target="_blank" rel="noopener">Comprar entradas</a>
+          </div>
+        </div>
+      </section>
+
+      <div style="height:18px"></div>
+
+      <div class="cols">
+        <div>
+          <section class="description">
+            <h3>Detalles</h3>
+            <p>Fecha y hora: <strong>30 de noviembre de 2025 — 19:25</strong><br>
+            Duración aproximada: <strong>7 minutos</strong><br>
+            Lugar: <strong>Olalde</strong></p>
+
+            <p>El evento es íntimo y de aforo limitado — revisa tu tipo de entrada al comprar. Recibirás instrucciones y el recordatorio de que el pago se realiza en taquilla el día del evento.</p>
+          </section>
+
+          <div style="height:18px"></div>
+
+          <section class="description">
+            <h3>Colaboradores</h3>
+            <div class="collabs">
+              <div class="collab">
+                <h4>Pipaon Esperientziak — Organizador</h4>
+                <p>Gabity es la propuesta organizada por <strong>Pipaon Esperientziak</strong>, un proyecto creativo que diseña experiencias y eventos íntimos. Gabity se celebra anualmente como parte de las iniciativas del colectivo para celebrar la Navidad de forma cercana y original.</p>
+                <p style="margin-top:8px"><a href="#" target="_blank" rel="noopener">Sitio web</a></p>
+              </div>
+
+              <div class="collab">
+                <h4>Saborium — Gastronomía gourmet</h4>
+                <p><strong>Saborium</strong> es una empresa de gastronomía y alimentos gourmet caseros, con propuestas dulces y saladas pensadas para eventos exclusivos.</p>
+                <p style="margin-top:8px"><a href="https://saborium.vercel.app" target="_blank" rel="noopener">saborium.vercel.app</a></p>
+              </div>
+
+              <div class="collab">
+                <h4>Olalde — Espacio anfitrión</h4>
+                <p><strong>Olalde</strong> es el lugar que acoge este evento tan esperado, ofreciendo el ambiente perfecto para que la experiencia de Gabity cobre vida.</p>
+                <p style="margin-top:8px"><a href="#" target="_blank" rel="noopener">Sitio web</a></p>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <aside>
+          <section class="description">
+            <h3>Entradas</h3>
+            <ul style="margin:10px 0 0 18px;color:#ddd">
+              <li><strong>Preferente (Sentado)</strong> — 2 € (2 unidades)</li>
+              <li><strong>General (Sentado - visibilidad reducida)</strong> — 1,50 € (2 unidades)</li>
+              <li><strong>De pie (Zona trasera)</strong> — 1 € (2 unidades)</li>
+              <li><strong>Full Experience</strong> — 6 € (2 unidades) — incluye comida y show exclusivo</li>
+            </ul>
+          </section>
+
+          <div style="height:18px"></div>
+
+          <section class="description">
+            <h3>Recordatorios</h3>
+            <p>Recuerda: el pago se realiza en taquilla el día del evento. Lleva tu confirmación de reserva (móvil o impreso) para acceder.</p>
+          </section>
+        </aside>
+      </div>
+
+      <footer>
+        <p>Gabity — Donde brilla la Navidad. &nbsp; &middot; &nbsp; Slogan: "Gabity: Donde brilla la Navidad."</p>
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    // Smooth scroll from arrow to content
+    document.getElementById('scrollArrow').addEventListener('click', function(){
+      document.getElementById('content').scrollIntoView({behavior:'smooth'});
+    });
+
+    // Countdown to 30 Nov 2025 19:25 Europe/Madrid (CET, UTC+1)
+    // Using explicit ISO with +01:00 offset
+    const target = new Date('2025-11-30T19:25:00+01:00').getTime();
+
+    function pad(n){return String(n).padStart(2,'0')}
+    function updateCountdown(){
+      const now = new Date().getTime();
+      let diff = Math.max(0, target - now);
+      const days = Math.floor(diff / (1000*60*60*24));
+      diff -= days * (1000*60*60*24);
+      const hours = Math.floor(diff / (1000*60*60));
+      diff -= hours * (1000*60*60);
+      const minutes = Math.floor(diff / (1000*60));
+      diff -= minutes * (1000*60);
+      const seconds = Math.floor(diff / 1000);
+
+      const el = document.getElementById('countdown');
+      if(target - now <= 0){
+        el.textContent = '¡Empieza ahora!';
+        clearInterval(timer);
+        return;
+      }
+      el.textContent = `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+    }
+
+    updateCountdown();
+    const timer = setInterval(updateCountdown,1000);
+
+    // Optional: ensure hero fills viewport on resize
+    function fitHero(){
+      const hero = document.getElementById('hero');
+      hero.style.height = window.innerHeight + 'px';
+    }
+    window.addEventListener('resize', fitHero);
+    fitHero();
+  </script>
 </body>
 </html>
