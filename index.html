@@ -431,7 +431,7 @@
         const bgAudio = document.getElementById('bg-audio');
         
         // Configurar volumen bajo del audio de fondo
-        bgAudio.volume = 0.2;
+        bgAudio.volume = 0.1;
         
         if (!localStorage.getItem('gabity-visited')) {
             enterBtn.addEventListener('click', () => {
@@ -464,11 +464,12 @@
                     }
                 });
                 
-                // Cuando el video termine, también permitir cerrar
+                // Cuando el video termine, cerrar automáticamente
                 introVideo.addEventListener('ended', () => {
                     clearInterval(countdown);
-                    skipMessage.innerHTML = 'Haz clic para continuar';
-                    skipMessage.style.cursor = 'pointer';
+                    introOverlay.classList.add('hidden');
+                    localStorage.setItem('gabity-visited', 'true');
+                    bgAudio.play();
                 });
             });
         } else {
